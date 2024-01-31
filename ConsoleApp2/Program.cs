@@ -11,8 +11,15 @@ namespace ConsoleApp2
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(HW(25));
-            Console.ReadLine();
+            bool counter = true;
+            while (counter == true)
+            {
+                int Input;
+                Console.WriteLine("ведите чесло если хотите выйти нажмите 1");
+                Input = Convert.ToInt32(Console.ReadLine());
+                if (Input == 1) { break; }
+                Console.WriteLine(HW(Input));
+            }
         }
 
         static int HW(int num)
