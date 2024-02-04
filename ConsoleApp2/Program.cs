@@ -1,46 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ConsoleApp2
+class Program
 {
-    internal class Program
+    static void Main()
     {
-        static void Main(string[] args)
+        string str = "x w x y x w";
+        int[] charCount = new int[256]; 
+
+        CountCharacters(str, charCount);
+
+        Console.WriteLine("Количество вхождений каждого символа:");
+        for (int i = 0; i < charCount.Length; i++)
         {
-            bool counter = true;
-            while (counter == true)
+            if (charCount[i] > 0)
             {
-                int Input;
-                Console.WriteLine("ведите чесло если хотите выйти нажмите 1");
-                Input = Convert.ToInt32(Console.ReadLine());
-                if (Input == 1) { break; }
-                Console.WriteLine(HW(Input));
+                Console.WriteLine($"{(char)i} - {charCount[i]} раза");
             }
         }
+        Console.ReadLine();
+    }
 
-        static int HW(int num)
+    static void CountCharacters(string str, int[] charCount)
+    {
+        foreach (char c in str)
         {
-            if(num % 5 != 0) { return -1; }
-
-            int temp = 0;
-
-            for (; num != 0; num /= 10)
+            if (char.IsLetterOrDigit(c))
             {
-                temp = temp * 10 + (num % 10);
+                charCount[(int)c]++;
             }
-            for (; temp != 0; temp /= 10)
-            {
-                num = num * 10 + (temp % 10);
-            }
-            num /= 10;
-
-            num = num * num * 100 + 25;
-
-            return num;
         }
     }
 }
