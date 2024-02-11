@@ -29,6 +29,7 @@ namespace test
                 {
                     books2[i] = books[i];
                 }
+                books = books2;
             }
         }
 
