@@ -1,147 +1,126 @@
 ﻿using System;
-using System.Collections.Generic;
-using test;
+using System.Linq;
 
-namespace test
+public class Item
 {
+    public string Name { get; set; }
+    public int Level { get; set; }
+    public int Value { get; set; }
+    public int Weight { get; set; }
 
-    public class Library
+    public Item(string name, int level, int value, int weight)
     {
-        private Book[] books;
-        private int count;
+        Name = name;
+        Level = level;
+        Value = value;
+        Weight = weight;
+    }
+}
 
-        public Library(int capacity)
+public class Player
+{
+    public string Name { get; set; }
+    private Item[] inventory;
+    private int count;
+
+    public Player(string name, int capacity)
+    {
+        Name = name;
+        inventory = new Item[capacity];
+        count = 0;
+    }
+
+    public void AddItem(Item item)
+    {
+        if (count < inventory.Length)
         {
-            books = new Book[capacity];
-            count = 0;
+            inventory[count++] = item;
         }
-
-        public void AddBook(Book book)
+        else
         {
-            if (count < books.Length)
-            {
-                books[count++] = book;
-            }
-            else
-            {
-                Book[] books2 = new Book[books.Length + 5];
-                for (int i = 0; i < books.Length; i++)
-                {
-                    books2[i] = books[i];
-                }
-                books = books2;
-            }
-        }
-
-        public void RemoveBook(Book book)
-        {
-            int index = Array.IndexOf(books, book);
-            if (index != -1)
-            {
-                for (int i = index; i < count - 1; i++)
-                {
-                    books[i] = books[i + 1];
-                }
-                books[count - 1] = null;
-                count--;
-            }
-        }
-
-        public Book SearchByAuthor(string author)
-        {
-            Book result;
-            foreach (var book in books)
-            {
-                if (book != null && book.Author == author)
-                {
-                    result = book;
-                    return result;
-                }
-            }
-            return null;
-        }
-
-        public Book SearchByYear(int year)
-        {
-            Book result;
-            foreach (var book in books)
-            {
-                if (book != null && book.Year == year)
-                {
-                    result = book;
-                    return result;
-                }
-            }
-            return null;
-        }
-
-        public void SortBooksByTitle()
-        {
-            Array.Sort(books, 0, count, new TitleComparer());
-        }
-
-        public void SortBooksByAuthor()
-        {
-            Array.Sort(books, 0, count, new AuthorComparer());
-        }
-
-        public void SortBooksByYear()
-        {
-            Array.Sort(books, 0, count, new YearComparer());
+            Console.WriteLine("Inventory is full. Cannot add more items.");
         }
     }
 
-    public class Book
+    public void RemoveItem(Item item)
     {
-        public string Title { get; set; }
-        public string Author { get; set; }
-        public int Year { get; set; }
-
-        public Book(string title, string author, int year)
+        int index = Array.IndexOf(inventory, item);
+        if (index != -1)
         {
-            Title = title;
-            Author = author;
-            Year = year;
+            for (int i = index; i < count - 1; i++)
+            {
+                inventory[i] = inventory[i + 1];
+            }
+            inventory[count - 1] = null;
+            count--;
+        }
+        else
+        {
+            Console.WriteLine("Item not found in the inventory.");
         }
     }
 
-
-
-    public class TitleComparer : IComparer<Book>
+    public int TotalWeight()
     {
-        public int Compare(Book x, Book y)
+        int totalWeight = 0;
+        foreach (var item in inventory)
         {
-            return string.Compare(x.Title, y.Title);
+            if (item != null)
+            {
+                totalWeight += item.Weight;
+            }
         }
+        return totalWeight;
     }
 
-    public class AuthorComparer : IComparer<Book>
+    public int TotalValue()
     {
-        public int Compare(Book x, Book y)
+        int totalValue = 0;
+        foreach (var item in inventory)
         {
-            return string.Compare(x.Author, y.Author);
+            if (item != null)
+            {
+                totalValue += item.Value;
+            }
         }
+        return totalValue;
     }
 
-    public class YearComparer : IComparer<Book>
+    public Item[] FindItemsByLevel(int level)
     {
-        public int Compare(Book x, Book y)
-        {
-            return x.Year.CompareTo(y.Year);
-        }
+        return inventory.Where(item => (item != null && item.Level == level)).ToArray();       // скопировал с интарнета
     }
 
+    public Item[] FindItemsByValue(int value)
+    {
+        return inventory.Where(item => item != null && item.Value == value).ToArray(); // скопировал с интарнета
+    }
 }
 
 class Program
 {
-    static void Main()
+    static void Main(string[] args)
     {
-        Library library = new Library(0);
-        Book book = new Book("e0e","fdwq",1222);
-        library.AddBook(book);
-        library.AddBook(book);
-        library.AddBook(book);
+        Player player = new Player("Player1", 10);
+
+        Item sword = new Item("Sword", 10, 100, 5);
+        Item armor = new Item("Armar", 15, 200, 10);
+        Item potion = new Item("Potion", 5, 50, 1);
+
+        player.AddItem(sword);
+        player.AddItem(armor);
+        player.AddItem(potion);
+
+        Console.WriteLine($"Total weight of player inventary: {player.TotalWeight()}");
+        Console.WriteLine($"Total value of player inventary: {player.TotalValue()}");
+
+        Console.WriteLine("Items with level 10: ");
+        Item[] level10Items = player.FindItemsByLevel(10);
+        foreach (var item in level10Items)
+        {
+            Console.WriteLine($"{item.Name} - Level: {item.Level}, Value: {item.Value}, Weight: {item.Weight}");
+        }
+
         Console.ReadLine();
     }
 }
