@@ -1,89 +1,65 @@
 ﻿using System;
 
-class Vehicle
+public class Processor
 {
-    public string Type { get; set; }
+    public string Model { get; }
 
-    public virtual string Description
+    public Processor(string model)
     {
-        get { return "This is a vehicle."; }
-    }
-
-    public virtual void Move()
-    {
-        Console.WriteLine("The vehicle is moving.");
-    }
-
-    public Vehicle(string type)
-    {
-        Type = type;
+        Model = model;
     }
 }
 
-class Truck : Vehicle
+public class Motherboard
 {
-    public Truck(string type) : base(type) { }
+    private Processor _processor;
+    private int _ramSizeGB;
 
-    public override string Description
+    public Processor Processor
     {
-        get { return "This is a truck."; }
+        get { return _processor; }
+        set { _processor = value; }
     }
 
-    public override void Move()
+    public int RamSizeGB
     {
-        Console.WriteLine("The truck is transporting goods.");
-    }
-}
-
-class Aircraft : Vehicle
-{
-    public Aircraft(string type) : base(type) { }
-
-    public override string Description
-    {
-        get { return "This is an aircraft."; }
+        get { return _ramSizeGB; }
+        set
+        {
+            if (value <= 0)
+            {
+                throw new ArgumentException("argument < 0");
+            }
+            _ramSizeGB = value;
+        }
     }
 
-    public override void Move()
+    public Motherboard(Processor processor, int ramSizeGB)
     {
-        Console.WriteLine("The aircraft is flying.");
-    }
-}
-
-class FighterJet : Aircraft
-{
-    public FighterJet(string type) : base(type) { }
-
-    public override void Move()
-    {
-        Console.WriteLine("The fighter jet is engaging in combat maneuvers.");
+        Processor = processor;
+        RamSizeGB = ramSizeGB;
     }
 
-    public void PerformAirStrike()
+    public string GetName()
     {
-        base.Move(); 
-        Console.WriteLine("Launching air strike!");
+        return $"{Processor.Model},{RamSizeGB}";
     }
-}
-
-class Helicopter : Aircraft
-{
-    public Helicopter(string type) : base(type) { }
 }
 
 class Program
 {
     static void Main(string[] args)
     {
-        Aircraft aircraft = new Aircraft("rrrr");
-        Console.WriteLine(aircraft.Description);
-        aircraft.Move();
-        Console.WriteLine();
-
-        Helicopter helicopter = new Helicopter("hhh");
-        Console.WriteLine(helicopter.Description);
-        helicopter.Move();
-
-        Console.ReadLine();
+        Processor processor = new Processor("Procea");
+        try
+        {
+            Motherboard motherboard = new Motherboard(processor, 16);
+            Console.WriteLine(motherboard.GetName());
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
     }
+
 }
