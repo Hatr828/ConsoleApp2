@@ -1,37 +1,38 @@
 ﻿using System;
 
-public interface ICipher
+public class Game : ICloneable
 {
-    string Encode(string input);
-    string Decode(string input);
-}
+    public string Name { get; set; }
+    public decimal Price { get; set; }
 
-public class Cipher : ICipher
-{
-    private const int shift = 2; // Количество бит для сдвига
-
-    public string Encode(string input)
+    public Game(string name, decimal price)
     {
-        char[] charArray = input.ToCharArray();
-
-        for (int i = 0; i < charArray.Length; i++)
-        {
-            charArray[i] = (char)(charArray[i] << shift);
-        }
-
-        return new string(charArray);
+        Name = name;
+        Price = price;
     }
 
-    public string Decode(string input)
+    public object Clone()
     {
-        char[] charArray = input.ToCharArray();
+        return new Game(Name, Price); 
+    }
+}
 
-        for (int i = 0; i < charArray.Length; i++)
-        {
-            charArray[i] = (char)(charArray[i] >> shift);
-        }
+public class GameStop
+{
+    public string Name { get; set; }
+    public int GamesCount { get; set; }
+    public Game Game { get; set; }
 
-        return new string(charArray);
+    public GameStop(string name, int gamesCount, Game game)
+    {
+        Name = name;
+        GamesCount = gamesCount;
+        Game = game;
+    }
+
+    public GameStop Clone()
+    {
+        return new GameStop(Name, GamesCount, (Game)Game.Clone());
     }
 }
 
@@ -39,15 +40,18 @@ class Program
 {
     static void Main(string[] args)
     {
-        ICipher cipher = new Cipher();
+        Game game1 = new Game("GTA V", 50.0m);
+        GameStop store1 = new GameStop("Store 1", 100, game1);
 
-        string originalString = "Hello, World!";
-        string encryptedString = cipher.Encode(originalString);
-        string decryptedString = cipher.Decode(encryptedString);
+        GameStop store2 = store1.Clone();
 
-        Console.WriteLine("1    " + originalString);
-        Console.WriteLine("2    " + encryptedString);
-        Console.WriteLine("3    " + decryptedString);
+        store2.Game.Name = "The Witcher 3";
+
+        Console.WriteLine("Store 1:");
+        Console.WriteLine($"{store1.Name}, {store1.GamesCount}, {store1.Game.Name}, {store1.Game.Price}");
+
+        Console.WriteLine("\nStore 2:");
+        Console.WriteLine($"{store2.Name},{store2.GamesCount},{store2.Game.Name}, {store2.Game.Price}");
 
         Console.ReadLine();
     }
