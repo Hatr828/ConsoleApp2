@@ -1,38 +1,63 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
-public class Game : ICloneable
+public enum Priority
 {
-    public string Name { get; set; }
-    public decimal Price { get; set; }
+    I = 1,
+    II,
+    III,
+    IV,
+    V,
+    VI,
+    VII,
+    IIX,
+    IX,
+    X
+}
 
-    public Game(string name, decimal price)
+public class Document
+{
+    public Priority priority;
+    public string name;
+
+    public Document(Priority priority, string name)
     {
-        Name = name;
-        Price = price;
+        this.priority = priority; 
+        this.name = name;
     }
 
-    public object Clone()
+    public override string ToString()
     {
-        return new Game(Name, Price); 
+       return (name + "   " + Convert.ToInt32(priority));
     }
 }
 
-public class GameStop
+public class DocumentQ
 {
-    public string Name { get; set; }
-    public int GamesCount { get; set; }
-    public Game Game { get; set; }
+    private List<Document> queue;
 
-    public GameStop(string name, int gamesCount, Game game)
+    public DocumentQ()
     {
-        Name = name;
-        GamesCount = gamesCount;
-        Game = game;
+        queue = new List<Document>();
     }
 
-    public GameStop Clone()
+    public void AddDocument(Document doc)
     {
-        return new GameStop(Name, GamesCount, (Game)Game.Clone());
+        queue.Add(doc);
+        queue = queue.OrderBy(x => x.priority).ToList();
+    }
+
+    public Document getDocument()
+    {
+        var rezult = queue.First();
+        queue.Remove(rezult);
+        return rezult;
+    }
+
+    public bool IsEmpty()
+    {
+        return queue.Count == 0;
     }
 }
 
@@ -40,18 +65,14 @@ class Program
 {
     static void Main(string[] args)
     {
-        Game game1 = new Game("GTA V", 50.0m);
-        GameStop store1 = new GameStop("Store 1", 100, game1);
+        DocumentQ printer;
 
-        GameStop store2 = store1.Clone();
+        printer = new DocumentQ();
 
-        store2.Game.Name = "The Witcher 3";
+        printer.AddDocument(new Document(Priority.X, "1 pdhh"));
 
-        Console.WriteLine("Store 1:");
-        Console.WriteLine($"{store1.Name}, {store1.GamesCount}, {store1.Game.Name}, {store1.Game.Price}");
+        Console.WriteLine(printer.getDocument());
 
-        Console.WriteLine("\nStore 2:");
-        Console.WriteLine($"{store2.Name},{store2.GamesCount},{store2.Game.Name}, {store2.Game.Price}");
 
         Console.ReadLine();
     }
