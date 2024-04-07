@@ -2,77 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public enum Priority
-{
-    I = 1,
-    II,
-    III,
-    IV,
-    V,
-    VI,
-    VII,
-    IIX,
-    IX,
-    X
-}
-
-public class Document
-{
-    public Priority priority;
-    public string name;
-
-    public Document(Priority priority, string name)
-    {
-        this.priority = priority; 
-        this.name = name;
-    }
-
-    public override string ToString()
-    {
-       return (name + "   " + Convert.ToInt32(priority));
-    }
-}
-
-public class DocumentQ
-{
-    private List<Document> queue;
-
-    public DocumentQ()
-    {
-        queue = new List<Document>();
-    }
-
-    public void AddDocument(Document doc)
-    {
-        queue.Add(doc);
-        queue = queue.OrderBy(x => x.priority).ToList();
-    }
-
-    public Document getDocument()
-    {
-        var rezult = queue.First();
-        queue.Remove(rezult);
-        return rezult;
-    }
-
-    public bool IsEmpty()
-    {
-        return queue.Count == 0;
-    }
-}
-
 class Program
 {
     static void Main(string[] args)
     {
-        DocumentQ printer;
+        Random r = new Random();
+        int[] array = new int[10];
 
-        printer = new DocumentQ();
-
-        printer.AddDocument(new Document(Priority.X, "1 pdhh"));
-
-        Console.WriteLine(printer.getDocument());
-
+        for(int i = 0; i < 10; i++)
+        {
+            array[i] = r.Next(-100,1000);
+        }
+        Console.WriteLine(array.All(e => e % 2 == 0));
+        Console.WriteLine(array.All(e => e > 10 && e < 45));
+        Console.WriteLine(array.Any(e => e < 0));
+        Console.WriteLine(array.Any(e => e < 0 && e % 2 != 0));
+        Console.WriteLine(array.Contains(7));
+        Console.WriteLine(array.FirstOrDefault(e => e > 723));
+        Console.WriteLine(array.LastOrDefault(e => e < 0));
 
         Console.ReadLine();
     }
