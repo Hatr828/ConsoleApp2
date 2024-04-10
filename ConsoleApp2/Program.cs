@@ -1,26 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+
+public static class StringExtensions
+{
+    public static string CapitalizeSentences(this string input)
+    {
+        var sentences = input.Split(new char[] { '.', '!', '?' }, StringSplitOptions.RemoveEmptyEntries);
+
+        var capitalizedSentences = sentences.Select(sentence =>
+        {
+            if (string.IsNullOrWhiteSpace(sentence))
+                return sentence; 
+
+            return char.ToUpper(sentence[0]) + sentence.Substring(1);
+        });
+
+        return string.Join(". ", capitalizedSentences) + ".";
+    }
+}
 
 class Program
 {
     static void Main(string[] args)
     {
-        Random r = new Random();
-        int[] array = new int[10];
+        string filePath = "test.txt";                                       
 
-        for(int i = 0; i < 10; i++)
-        {
-            array[i] = r.Next(-100,1000);
-        }
-        Console.WriteLine(array.All(e => e % 2 == 0));
-        Console.WriteLine(array.All(e => e > 10 && e < 45));
-        Console.WriteLine(array.Any(e => e < 0));
-        Console.WriteLine(array.Any(e => e < 0 && e % 2 != 0));
-        Console.WriteLine(array.Contains(7));
-        Console.WriteLine(array.FirstOrDefault(e => e > 723));
-        Console.WriteLine(array.LastOrDefault(e => e < 0));
+        string text = File.ReadAllText(filePath);
 
+        string capitalizedText = text.CapitalizeSentences();
+
+         Console.WriteLine(capitalizedText);
         Console.ReadLine();
     }
 }
